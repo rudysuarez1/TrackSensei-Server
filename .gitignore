@@ -1,0 +1,53 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+
+# Poetry virtualenvs (if in-project)
+.env/
+.venv/
+
+# Poetry-specific
+poetry.lock
+
+# Environment variable files
+.env
+.env.*
+
+# VSCode / IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and debug
+*.log
+*.bak
+
+# Test output
+htmlcov/
+coverage.xml
+*.cover
+.cache/
+.tox/
+.pytest_cache/
+
+# Jupyter notebooks checkpoints (if used later)
+.ipynb_checkpoints/
+
+# Local Postgres dumps or backups
+*.sql
+*.dump
+*.backup
+
+# Migrations (if generated later and not meant to track)
+migrations/
+
+# Build outputs
+dist/
+build/
