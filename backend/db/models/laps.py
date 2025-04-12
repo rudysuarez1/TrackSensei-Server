@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
-from backend.db.models.base import Base
+from sqlalchemy.orm import relationship
+from .base import Base
 
 
 class Lap(Base):
@@ -12,3 +13,5 @@ class Lap(Base):
     started_at = Column(DateTime, nullable=False)
     duration_ms = Column(Integer)
     conditions = Column(String)  # Store JSON as string for now
+
+    telemetry_points = relationship("TelemetryPoint", back_populates="lap")

@@ -15,7 +15,7 @@ poetry.lock
 
 # Environment variable files
 .env
-.env.*
+.env.example
 
 # VSCode / IDEs
 .vscode/

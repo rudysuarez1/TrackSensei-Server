@@ -1,17 +1,20 @@
-from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime
-from backend.db.models.base import Base
+from sqlalchemy import Column, Integer, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from .base import Base
 
 
 class TelemetryPoint(Base):
     __tablename__ = "telemetry_points"
 
     id = Column(Integer, primary_key=True, index=True)
-    lap_id = Column(Integer, ForeignKey("laps.id"), nullable=False)
-    timestamp = Column(DateTime, nullable=False)
-    latitude = Column(Float)
-    longitude = Column(Float)
-    speed_kph = Column(Float)
-    accel_x = Column(Float)
-    accel_y = Column(Float)
-    accel_z = Column(Float)
-    elevation_m = Column(Float)
+    lap_id = Column(Integer, ForeignKey("laps.id"))
+    timestamp = Column(Float, nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+    speed_kph = Column(Float, nullable=True)
+    accel_x = Column(Float, nullable=True)
+    accel_y = Column(Float, nullable=True)
+    accel_z = Column(Float, nullable=True)
+    elevation_m = Column(Float, nullable=True)
+
+    lap = relationship("Lap", back_populates="telemetry_points")
