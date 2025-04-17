@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from backend.db.db import get_db
 from backend.api.utils.auth import get_current_user
 from backend.db.models.users import User
+from backend.api.schemas.telemetry import TelemetryData
 
 
 def check_role(required_role: str):
@@ -35,17 +36,6 @@ def check_role(required_role: str):
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-class TelemetryData(BaseModel):
-    timestamp: datetime
-    latitude: float
-    longitude: float
-    speed_kph: float | None = None
-    accel_x: float | None = None
-    accel_y: float | None = None
-    accel_z: float | None = None
-    elevation_m: float | None = None
 
 
 @router.post("/telemetry/{lap_id}")

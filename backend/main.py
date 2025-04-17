@@ -4,6 +4,7 @@ from backend.db.db import engine
 from backend.api.routes.laps import router as laps_router
 from backend.api.routes.telemetry import router as telemetry_router
 from backend.api.routes.users import router as users_router
+from backend.api.routes.sessions import router as sessions_router
 from backend.api.utils.auth import get_current_user
 
 app = FastAPI()
@@ -15,6 +16,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(laps_router, prefix="/api", tags=["Laps"])
 app.include_router(telemetry_router, prefix="/api", tags=["Telemetry"])
 app.include_router(users_router, prefix="/api", tags=["Users"])
+app.include_router(sessions_router, prefix="/api", tags=["Sessions"])
 
 
 @app.get("/")

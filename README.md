@@ -135,3 +135,6 @@ poetry run uvicorn backend.main:app --reload
 - Pyright
 - Pre-commit
 - Pytest
+
+## Security Roadmap
+For details on our security roadmap, please see [SECURITY.md](SECURITY.md).
