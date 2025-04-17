@@ -1,37 +1,61 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from backend.db.db import get_db
-from backend.api.utils.auth import SECRET_KEY, ALGORITHM
-from jose import jwt, JWTError
-from backend.db.models.users import User
-from fastapi.security import OAuth2PasswordBearer
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
-
-
-def get_current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(
-                status_code=401, detail="Invalid authentication credentials"
-            )
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Could not validate credentials")
-
-    user = db.query(User).filter(User.username == username).first()
-    if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
-
-    return user
-
+from backend.db.models.laps import Lap
+from backend.api.utils.auth import get_current_user
+from backend.api.schemas.laps import (
+    LapCreate,
+    LapRead,
+)  # Assuming you will create these schemas
+from typing import List
+from backend.db.models.users import User  # Ensure this import is present
 
 router = APIRouter()
 
 
-@router.get("/laps")
-def read_laps(user: User = Depends(get_current_user)):
-    return {"laps": [], "user": user.username}
+# Retrieve details of a specific lap
+@router.get("/laps/{lap_id}", response_model=LapRead)
+def get_lap(
+    lap_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> LapRead:
+    lap = db.query(Lap).filter(Lap.id == lap_id).first()
+    if not lap:
+        raise HTTPException(status_code=404, detail="Lap not found")
+    return lap
+
+
+# Update lap information
+@router.put("/laps/{lap_id}", response_model=LapRead)
+def update_lap(
+    lap_id: int,
+    lap: LapCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> LapRead:
+    lap_db = db.query(Lap).filter(Lap.id == lap_id).first()
+    if not lap_db:
+        raise HTTPException(status_code=404, detail="Lap not found")
+
+    for key, value in lap.dict().items():
+        setattr(lap_db, key, value)
+
+    db.commit()
+    return lap_db
+
+
+# Delete a lap
+@router.delete("/laps/{lap_id}", status_code=204)
+def delete_lap(
+    lap_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    lap = db.query(Lap).filter(Lap.id == lap_id).first()
+    if not lap:
+        raise HTTPException(status_code=404, detail="Lap not found")
+
+    db.delete(lap)
+    db.commit()
+    return {"detail": "Lap deleted successfully"}

@@ -5,7 +5,7 @@ from backend.db.models.base import Base
 class Track(Base):
     __tablename__ = "tracks"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, nullable=False)
     location = Column(String)
     length_km = Column(Float)

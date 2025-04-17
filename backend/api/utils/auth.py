@@ -11,6 +11,8 @@ from fastapi.security import OAuth2PasswordBearer
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
+REFRESH_EXPIRATION_MINUTES = 120  # Set refresh token expiration time
+
 
 def create_access_token(username: str):
     expire = datetime.utcnow() + timedelta(minutes=EXPIRATION_MINUTES)
@@ -18,11 +20,19 @@ def create_access_token(username: str):
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def verify_password(plain_password, hashed_password):
+def create_refresh_token(username: str):
+    expire = datetime.utcnow() + timedelta(minutes=REFRESH_EXPIRATION_MINUTES)
+    payload = {"sub": username, "exp": expire}
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a plain password against a hashed password."""
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password):
+def get_password_hash(password: str) -> str:
+    """Hash a password using bcrypt."""
     return pwd_context.hash(password)
 
 

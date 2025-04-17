@@ -1,11 +1,13 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
+from typing import Optional
 
 
 # User creation schema (input)
 class UserCreate(BaseModel):
-    username: str
-    email: EmailStr
-    password: str  # plain password, hashed on creation
+    username: constr(min_length=3, max_length=50)  # Username with length constraints
+    email: EmailStr  # Validated email format
+    phone_number: Optional[str] = None  # Optional phone number
+    password: constr(min_length=8)  # Password with minimum length
 
     class Config:
         from_attributes = True  # Allow creation from attributes
@@ -22,19 +24,21 @@ class UserLogin(BaseModel):
 
 # User data returned in responses (output)
 class UserRead(BaseModel):
-    id: int
-    username: str
-    email: EmailStr
+    id: int  # User ID
+    username: str  # Username
+    email: EmailStr  # Validated email format
+    phone_number: Optional[str] = None  # Optional phone number
+    role: str  # Authorization information (admin, user, paid_user)
 
     class Config:
-        orm_mode = True
-        from_attributes = True  # Allow creation from attributes
+        from_attributes = True  # Updated from orm_mode to from_attributes
 
 
-class UserSignUpModel(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+# class UserSignUpModel(BaseModel):
+#     username: constr(min_length=3, max_length=50)  # Username with length constraints
+#     email: EmailStr  # Validated email format
+#     password: constr(min_length=8)  # Password with minimum length
+#     phone_number: Optional[str] = None  # Optional phone number
 
-    class Config:
-        from_attributes = True  # Allow creation from attributes
+#     class Config:
+#         from_attributes = True  # Allow creation from attributes

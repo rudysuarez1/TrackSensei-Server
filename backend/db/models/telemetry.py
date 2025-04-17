@@ -6,7 +6,7 @@ from .base import Base
 class TelemetryPoint(Base):
     __tablename__ = "telemetry_points"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     lap_id = Column(Integer, ForeignKey("laps.id"))
     timestamp = Column(Float, nullable=False)
     latitude = Column(Float, nullable=False)

@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from backend.db.db import get_db
 from backend.api.utils.auth import get_current_user
 from backend.db.models.users import User
+from backend.api.schemas.telemetry import TelemetryData
 
 
 def check_role(required_role: str):
@@ -37,28 +38,29 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-class TelemetryData(BaseModel):
-    timestamp: datetime
-    latitude: float
-    longitude: float
-    speed_kph: float | None = None
-    accel_x: float | None = None
-    accel_y: float | None = None
-    accel_z: float | None = None
-    elevation_m: float | None = None
-
-
-@router.post("/telemetry/{lap_id}")
+@router.post("/telemetry/{lap_id}", response_model=dict)
 def upload_telemetry(
     lap_id: int,
     data: List[TelemetryData],
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # Authentication dependency
+    current_user: User = Depends(get_current_user),
 ):
     points = [TelemetryPoint(lap_id=lap_id, **point.dict()) for point in data]
     db.add_all(points)
     db.commit()
     return {
         "message": f"{len(points)} telemetry points added to lap {lap_id}",
-        "user": current_user.username,  # Optional confirmation of the user
+        "user": current_user.username,
     }
+
+
+@router.get("/telemetry/{lap_id}", response_model=List[TelemetryData])
+def get_telemetry(lap_id: int, db: Session = Depends(get_db)):
+    telemetry_points = (
+        db.query(TelemetryPoint).filter(TelemetryPoint.lap_id == lap_id).all()
+    )
+    if not telemetry_points:
+        raise HTTPException(
+            status_code=404, detail="Telemetry data not found for this lap"
+        )
+    return telemetry_points
