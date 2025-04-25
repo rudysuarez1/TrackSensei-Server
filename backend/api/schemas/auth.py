@@ -17,4 +17,4 @@ class User(BaseModel):
     username: str
 
     class Config:
-        orm_mode = True  # This allows compatibility with ORM models
+        from_attributes = True  # Updated to use from_attributes

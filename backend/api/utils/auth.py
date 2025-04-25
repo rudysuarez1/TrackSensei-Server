@@ -16,15 +16,13 @@ REFRESH_EXPIRATION_MINUTES = 120  # Set refresh token expiration time
 
 
 def create_access_token(username: str):
-    expire = datetime.utcnow() + timedelta(minutes=EXPIRATION_MINUTES)
-    payload = {"sub": username, "exp": expire}
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    # Token creation logic
+    pass
 
 
 def create_refresh_token(username: str):
-    expire = datetime.utcnow() + timedelta(minutes=REFRESH_EXPIRATION_MINUTES)
-    payload = {"sub": username, "exp": expire}
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    # Token creation logic
+    pass
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

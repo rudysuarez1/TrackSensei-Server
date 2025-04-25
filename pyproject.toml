@@ -1,9 +1,9 @@
 [project]
 name = "tracksensei-server"
 version = "0.1.0"
-description = ""
+description = "Machine learning assisted track mentor."
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "TrackSensei Team", email = "rudysuarez.ita@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.13"
@@ -18,10 +18,18 @@ dependencies = [
     "pydantic[email] (>=2.11.3,<3.0.0)"
 ]
 
+packages = [
+    { include = "api" },
+    { include = "db" },
+    { include = "services" }
+]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+# Disable package mode
+package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"

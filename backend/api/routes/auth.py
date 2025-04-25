@@ -8,8 +8,9 @@ from backend.api.utils.auth import (
     create_access_token,
     create_refresh_token,
     get_current_user,
+    store_refresh_token,
+    invalidate_refresh_token,
 )
-from backend.api.schemas.auth import store_refresh_token, invalidate_refresh_token
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from backend.api.utils.config import SECRET_KEY, ALGORITHM
@@ -21,24 +22,9 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
-@router.post("/auth/register/", response_model=User)
-async def register_user(user: UserCreate):
-    # Logic to register a new user
-    # For example, check if the user already exists and create a new user
-    pass
-
-
-@router.post("/auth/login/", response_model=User)
-async def login_user(user: UserLogin):
-    # Logic to authenticate the user
-    # For example, verify credentials and return user info or token
-    pass
-
-
 @router.post("/auth/login")
 def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == user_login.username).first()
-
     if not user or not verify_password(user_login.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -57,9 +43,12 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
 
 @router.post("/auth/logout")
 def logout(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    # Invalidate the refresh token
-    invalidate_refresh_token(token, db)
-    return {"detail": "Logout successful"}
+    try:
+        # Invalidate the refresh token
+        invalidate_refresh_token(token, db)
+        return {"detail": "Logout successful"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Logout failed: " + str(e))
 
 
 @router.post("/auth/refresh")
