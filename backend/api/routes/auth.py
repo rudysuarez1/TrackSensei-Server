@@ -14,15 +14,25 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from backend.api.utils.config import SECRET_KEY, ALGORITHM
 from backend.api.schemas.users import UserRead
+from backend.api.schemas.auth import User, UserCreate, UserLogin
 
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
-class UserLogin(BaseModel):
-    username: str
-    password: str
+@router.post("/auth/register/", response_model=User)
+async def register_user(user: UserCreate):
+    # Logic to register a new user
+    # For example, check if the user already exists and create a new user
+    pass
+
+
+@router.post("/auth/login/", response_model=User)
+async def login_user(user: UserLogin):
+    # Logic to authenticate the user
+    # For example, verify credentials and return user info or token
+    pass
 
 
 @router.post("/auth/login")
@@ -69,6 +79,6 @@ def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
     return {"access_token": new_access_token, "token_type": "bearer"}
 
 
-@router.get("/auth/me", response_model=UserRead)
-def read_users_me(current_user: User = Depends(get_current_user)):
-    return UserRead.from_orm(current_user)
+@router.get("/auth/me/", response_model=User)
+async def get_current_user_route(current_user: User = Depends(get_current_user)):
+    return current_user

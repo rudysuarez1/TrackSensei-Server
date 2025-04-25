@@ -138,3 +138,30 @@ poetry run uvicorn backend.main:app --reload
 
 ## Security Roadmap
 For details on our security roadmap, please see [SECURITY.md](SECURITY.md).
+
+## API Documentation
+
+This API is built using FastAPI, which provides automatic interactive API documentation.
+
+### Accessing Swagger UI
+
+You can access the Swagger UI to explore and test the API endpoints by navigating to the following URL in your web browser:
+
+```
+http://localhost:8000/docs
+```
+
+### Accessing ReDoc
+
+For a more visually appealing documentation interface, you can also access ReDoc at:
+
+```
+http://localhost:8000/redoc
+```
+
+### Using the Documentation
+
+- **Swagger UI**: This interface allows you to view all available endpoints, their parameters, and response formats. You can also test the endpoints directly from the UI.
+- **ReDoc**: This interface provides a structured view of the API documentation, making it easy to read and understand.
+
+Make sure your FastAPI application is running before accessing these URLs.

@@ -12,6 +12,8 @@ from backend.api.utils.auth import get_current_user
 from fastapi.responses import RedirectResponse
 from backend.api.routes.dashboard import router as dashboard_router
 from backend.db.models.users import User
+from backend.api.routes import settings
+from backend.db.models.settings import UserSettings
 
 app = FastAPI()
 
@@ -33,6 +35,7 @@ def init_db():
         "telemetry_points",
         "tracks",
         "vehicles",
+        "user_settings",  # Add the new settings table
     ]
 
     # Create all tables if they do not exist
@@ -40,7 +43,6 @@ def init_db():
         if table not in inspector.get_table_names():
             print(f"Creating table: {table}")
             Base.metadata.create_all(bind=engine)
-            break  # Exit after creating the first missing table to avoid unnecessary calls
 
 
 # Call the init_db function when starting the app
@@ -56,6 +58,7 @@ app.include_router(users_router, prefix="/api", tags=["Users"])
 app.include_router(sessions_router, prefix="/api", tags=["Sessions"])
 app.include_router(auth_router, prefix="/api", tags=["Auth"])
 app.include_router(dashboard_router, prefix="/api", tags=["Dashboard"])
+app.include_router(settings.router, prefix="/api", tags=["settings"])
 
 
 @app.get("/")

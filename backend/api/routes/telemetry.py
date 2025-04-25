@@ -12,7 +12,6 @@ from backend.db.models.users import User
 from backend.api.routes.laps import get_current_user
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from backend.db.db import get_db
 from backend.api.utils.auth import get_current_user
 from backend.db.models.users import User
 from backend.api.schemas.telemetry import TelemetryData
@@ -55,7 +54,11 @@ def upload_telemetry(
 
 
 @router.get("/telemetry/{lap_id}", response_model=List[TelemetryData])
-def get_telemetry(lap_id: int, db: Session = Depends(get_db)):
+def get_telemetry(
+    lap_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     telemetry_points = (
         db.query(TelemetryPoint).filter(TelemetryPoint.lap_id == lap_id).all()
     )
@@ -64,3 +67,20 @@ def get_telemetry(lap_id: int, db: Session = Depends(get_db)):
             status_code=404, detail="Telemetry data not found for this lap"
         )
     return telemetry_points
+
+
+@router.delete("/telemetry/{lap_id}", response_model=dict)
+def delete_telemetry(
+    lap_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    telemetry_points = db.query(TelemetryPoint).filter(TelemetryPoint.lap_id == lap_id)
+    if telemetry_points.count() == 0:
+        raise HTTPException(
+            status_code=404, detail="No telemetry data found for this lap"
+        )
+
+    telemetry_points.delete(synchronize_session=False)
+    db.commit()
+    return {"detail": "Telemetry data deleted successfully"}

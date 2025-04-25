@@ -7,6 +7,7 @@ from backend.db.db import get_db
 from backend.api.utils.config import SECRET_KEY, ALGORITHM, EXPIRATION_MINUTES
 from backend.db.models.users import User
 from fastapi.security import OAuth2PasswordBearer
+from backend.db.models.auth import RefreshToken
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -57,3 +58,15 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
+
+def store_refresh_token(username: str, token: str, db: Session):
+    db_token = RefreshToken(username=username, token=token)
+    db.add(db_token)
+    db.commit()
+    db.refresh(db_token)
+
+
+def invalidate_refresh_token(token: str, db: Session):
+    db.query(RefreshToken).filter(RefreshToken.token == token).delete()
+    db.commit()

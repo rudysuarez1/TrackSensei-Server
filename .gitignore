@@ -4,16 +4,15 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
+*.dll
+*.dylib
 *.egg-info/
 
 # Poetry virtualenvs (if in-project)
 .env/
 .venv/
 
-# Poetry-specific
-poetry.lock
-
-# Environment variable files
+# Environment variables
 .env
 .env.example
 
@@ -37,15 +36,21 @@ coverage.xml
 .tox/
 .pytest_cache/
 
-# Jupyter notebooks checkpoints (if used later)
+# Jupyter notebooks
 .ipynb_checkpoints/
 
-# Local Postgres dumps or backups
+# Local DB or SQL
+*.sqlite3
+*.db
 *.sql
 *.dump
 *.backup
 
-# Migrations (if generated later and not meant to track)
+# SSL keys (if using self-signed or dev certs)
+cert.pem
+key.pem
+
+# Migrations (if not tracking)
 migrations/
 
 # Build outputs
