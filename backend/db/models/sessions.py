@@ -12,4 +12,4 @@ class Session(Base):
     end_time = Column(DateTime, nullable=True)
     details = Column(String, nullable=True)
 
-    user = relationship("User", back_populates="sessions")
+    user = relationship("User")

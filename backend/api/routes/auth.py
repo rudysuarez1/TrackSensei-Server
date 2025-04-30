@@ -15,7 +15,11 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from backend.api.utils.config import SECRET_KEY, ALGORITHM
 from backend.api.schemas.users import UserRead
-from backend.api.schemas.auth import User, UserCreate, UserLogin
+from backend.api.schemas.auth import (
+    User as AuthUser,
+    UserCreate as AuthUserCreate,
+    UserLogin as AuthUserLogin,
+)
 
 router = APIRouter()
 
@@ -23,7 +27,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 @router.post("/auth/login")
-def login(user_login: UserLogin, db: Session = Depends(get_db)):
+def login(user_login: AuthUserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == user_login.username).first()
     if not user or not verify_password(user_login.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -68,6 +72,6 @@ def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
     return {"access_token": new_access_token, "token_type": "bearer"}
 
 
-@router.get("/auth/me/", response_model=User)
-async def get_current_user_route(current_user: User = Depends(get_current_user)):
+@router.get("/auth/me/", response_model=AuthUser)
+async def get_current_user_route(current_user: AuthUser = Depends(get_current_user)):
     return current_user

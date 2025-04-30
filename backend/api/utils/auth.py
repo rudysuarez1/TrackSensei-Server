@@ -15,14 +15,18 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 REFRESH_EXPIRATION_MINUTES = 120  # Set refresh token expiration time
 
 
-def create_access_token(username: str):
-    # Token creation logic
-    pass
+def create_access_token(username: str) -> str:
+    expire = datetime.utcnow() + timedelta(minutes=EXPIRATION_MINUTES)
+    to_encode = {"sub": username, "exp": int(expire.timestamp())}
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 
-def create_refresh_token(username: str):
-    # Token creation logic
-    pass
+def create_refresh_token(username: str) -> str:
+    expire = datetime.utcnow() + timedelta(minutes=REFRESH_EXPIRATION_MINUTES)
+    to_encode = {"sub": username, "exp": int(expire.timestamp())}
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
